@@ -80,6 +80,15 @@ h1 em{font-style:italic;font-weight:560}
   border-bottom:1px dotted var(--wax);padding-bottom:1px;
 }
 .alt-link a:hover{color:var(--wax-deep);border-bottom-style:solid}
+.mode-toggle{display:inline-flex;margin-top:9px;border:1.5px solid var(--ink);border-radius:3px;overflow:hidden}
+.mode-btn{
+  appearance:none;border:none;background:none;cursor:pointer;
+  font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--ink-soft);padding:6px 13px 5px;transition:all .15s;
+}
+.mode-btn + .mode-btn{border-left:1.5px solid var(--ink)}
+.mode-btn.active{background:var(--ink);color:var(--paper-hi)}
+.mode-btn:not(.active):hover{color:var(--ink)}
 .mast-rule{display:flex;align-items:center;gap:14px;margin-top:clamp(6px,1vmin,12px);color:var(--ink-soft)}
 .mast-rule::before,.mast-rule::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--hair) 18%,var(--hair) 82%,transparent)}
 .mast-rule span{font-size:13px;line-height:1}
@@ -223,6 +232,10 @@ text[text-anchor="end"]{text-anchor:end}
       <h1>TLS<em>Notary</em></h1>
       <div class="subtitle">The Mathematical Appendix — what the blindfold, the stamps, and the seal are made of.</div>
       <div class="alt-link"><a href="./">☜ prefer a story? read the illustrated edition</a></div>
+      <div class="mode-toggle" role="group" aria-label="Reading register">
+        <button class="mode-btn" id="mode-formal">formal</button>
+        <button class="mode-btn" id="mode-plain">plain words</button>
+      </div>
       <div class="mast-rule"><span>✦</span></div>
     </header>
 
@@ -669,7 +682,7 @@ text[text-anchor="end"]{text-anchor:end}
       </div>
       <ol class="cap-steps" id="cap-steps"></ol>
       <aside class="cap-threat" id="cap-threat">
-        <div class="threat-label">† the attack, formally</div>
+        <div class="threat-label" id="threat-label">† the attack, formally</div>
         <p class="threat-body" id="threat-body"></p>
         <p class="threat-hence" id="threat-hence"></p>
       </aside>
@@ -730,10 +743,18 @@ const PLATES = [
       "Both endpoints hold k — they must, to talk at all. So whatever the server can MAC, the client can MAC identically. The math that authenticates the server to you authenticates nothing about you to anyone else.",
       "Formally: a symmetric transcript is simulatable by either endpoint. Whatever you publish, you could have generated. Non-transferability is a feature of TLS — and our problem to solve."
     ],
+    plain:[
+      "Every message to the bank travels like this: a header, the scrambled text, and a little 16-byte tag riding along. The tag is a tamper alarm — if anyone alters the message in transit, the tag stops matching.",
+      "Ignore the symbols and read the recipe: the tag is a fancy checksum of the message, cooked with one secret ingredient — the key k. Think “add up all the letters, then mix in a secret number,” just industrial-strength.",
+      "The catch: cooking and checking use the same ingredient, and both kitchens stock it. You can verify the bank's checksums — and you can cook identical ones yourself, for any message you invent.",
+      "So you could hand the landlord a perfectly “valid” record you wrote yourself. Symmetric means both sides can do everything — which makes the transcript worthless as evidence."
+    ],
     atkSub:3,
     margin:"AEAD per RFC 5116; GCM: McGrew–Viega 2004; TLS 1.3: RFC 8446",
     attack:"The “forgery” needs no attack at all: the verification algorithm accepts any (CT′, tag′) produced with the very key the prover legitimately holds.",
-    hence:"soundness must come from somewhere the prover's key isn't."
+    hence:"soundness must come from somewhere the prover's key isn't.",
+    attackP:"No hacking is needed: the checker happily accepts anything cooked with the key you legitimately own. The forgery and the real thing are the same recipe.",
+    henceP:"the proof has to come from an ingredient you don't have."
   },
   {
     n:"Plate II", title:"The Objects",
@@ -743,10 +764,18 @@ const PLATES = [
       "Two goals, pulling opposite directions. Privacy: N must learn nothing of the plaintext. Soundness: P must be unable to attest anything S never sent.",
       "And one allowed failure, stated up front: P and N in collusion can attest fiction. Soundness is therefore relative to V's choice of N — Plate VIII turns that into arithmetic."
     ],
+    plain:[
+      "Four characters, now wearing their formal names: P is you (you hold the secrets), S is the bank's website (it just runs TLS), N is the blindfolded helper, and V is the landlord, checking the finished proof.",
+      "The rules of the game: assume P and N will cheat anywhere the math doesn't physically stop them. S follows the protocol. V trusts exactly one thing — the helper's public key.",
+      "Two promises pulling opposite directions: the helper must learn nothing (privacy), and you must be unable to fake anything (soundness). The entire protocol lives in that tension.",
+      "And one honest disclaimer before we begin: if you and the helper team up, you can co-sign fiction. Everything that follows protects the landlord from each of you alone — Plate VIII puts a price on the team-up."
+    ],
     atkSub:1,
     margin:"the academic ancestor: DECO — Zhang, Maram, Frost et al., CCS 2020",
     attack:"The proxy design: let N terminate TLS and read everything. Soundness comes trivially — and privacy is destroyed totally. The witness becomes the threat.",
-    hence:"N participates in the cryptography, never in the conversation."
+    hence:"N participates in the cryptography, never in the conversation.",
+    attackP:"The lazy fix — let the helper sit in the middle and read everything — buys a witness by giving away your privacy. The watcher becomes the danger.",
+    henceP:"the helper joins the math, never the conversation."
   },
   {
     n:"Plate III", title:"The Shared Secret",
@@ -757,10 +786,19 @@ const PLATES = [
       "ECtF — a short two-party protocol built on multiplicative-to-additive share conversion — turns point shares into field shares: pms_P + pms_N ≡ x(Z) mod p, with neither side learning x(Z).",
       "The key schedule (HKDF) then runs inside the 2PC. Every session key is born additively split: k = k_P ⊕ k_N. No whole key exists anywhere, at any time, in anyone's memory."
     ],
+    plain:[
+      "Picture a weird billiard table with one legal move: hop. Hopping many times forward is easy; counting someone's hops from where they landed is hopeless. The bank hops a secret number of times, publishes its landing spot — and signs it with its pen.",
+      "You secretly hop d_P times; the helper hops d_N times. Combined, it looks exactly like ONE visitor who hopped d_P + d_N times. The bank sees one ordinary landing spot and suspects nothing.",
+      "Now each of you holds a piece of the final secret — but the pieces are positions on the table, and positions don't add up like numbers do. Annoying.",
+      "A short ritual (ECtF) fixes it: it converts “two positions that combine into the secret” into “two plain numbers that add up to the secret.” Think secret = 1000: you hold 723, the helper holds 277. Either half alone is meaningless static.",
+      "From there every session key is built while still split. k = k_P ⊕ k_N just says: one half is pure noise, the other is the key hidden under exactly that noise. No whole key ever exists, anywhere."
+    ],
     atkSub:2,
     margin:"ECtF: DECO §4; MtA via Paillier or oblivious transfer",
     attack:"Whoever learns x(Z) derives every key: P could then forge, N could then decrypt. And a handshake with a nonstandard shape invites fingerprinting and refusal by S.",
-    hence:"the split happens inside the algebra — the wire format stays bit-for-bit standard TLS."
+    hence:"the split happens inside the algebra — the wire format stays bit-for-bit standard TLS.",
+    attackP:"Anyone who learns the full hop-count owns every key: you could forge, the helper could read. And a strange-sounding knock could get the bank's door slammed shut.",
+    henceP:"the secret is split before it is ever whole — and the knock sounds exactly standard."
   },
   {
     n:"Plate IV", title:"The Two-Party Cipher",
@@ -771,10 +809,19 @@ const PLATES = [
       "GCM's tag is a polynomial in H over GF(2^128). P and N hold additive shares of every power of H, so each computes only a share of every tag. A complete tag never exists in one place before the moment of sending.",
       "Malicious security comes from DEAP — dual execution with asymmetric privacy: the circuit runs twice with roles swapped, plus an equality check, arranged so P's inputs stay private even against a cheating N, while a cheating P gains nothing but the certainty of being caught."
     ],
+    plain:[
+      "The blindfold, dissected. Any computation is a pile of tiny logic gates. For every wire, the helper invents two random codenames — one secretly means 0, one means 1. Each gate becomes four locked boxes; the right pair of input codenames opens exactly one, revealing the output's codename.",
+      "How do you fetch the codename for your own secret bit without saying the bit out loud? Oblivious transfer: two sealed envelopes are offered, you receive exactly the one you chose, and the offerer provably cannot tell which one you took.",
+      "Run AES through this machine: thousands of little boxes. Your key-half enters as codenames, the helper's too, and the scrambled message comes out — to you alone. Encryption happened, and the helper saw nothing but gibberish strings.",
+      "The tamper-tags are computed the same split way: you each produce half a tag, and the halves only snap together at the instant of sending. You never once hold the whole stamp.",
+      "And if the box-builder builds lying boxes? Run everything twice with the roles swapped, then compare answers. A cheater would have to predict the honest run's answer — so cheating just means getting caught."
+    ],
     atkSub:4,
     margin:"Yao '86 · free-XOR & half-gates · IKNP '03 · DEAP: tlsnotary docs",
     attack:"A malicious garbler can submit a corrupted circuit that leaks an input bit; classic dual execution leaks one bit on abort. The asymmetry must land that risk on the party with nothing to hide.",
-    hence:"N holds no secrets inside the circuit — so N absorbs the leak risk, and P keeps the privacy."
+    hence:"N holds no secrets inside the circuit — so N absorbs the leak risk, and P keeps the privacy.",
+    attackP:"A dishonest box-builder could craft boxes that leak a bit of your input; older schemes leaked a bit whenever someone quit mid-game.",
+    henceP:"the helper has no secrets in the boxes — the leak risk lands on the party with nothing to lose."
   },
   {
     n:"Plate V", title:"The Commitment",
@@ -784,10 +831,18 @@ const PLATES = [
       "Chunk the labels, hash to leaves c_i, Merkle-ize to a root r. The attestation is σ = Sign_N( r || H(handshake) || τ ) — and H(handshake) contains S's certificate chain and its CertificateVerify signature.",
       "Only then does N send k_N. P decrypts the transcript locally, at leisure. A forged record now would need a fresh tag under keys whose channel died at τ0 — there is nothing left to authenticate to."
     ],
+    plain:[
+      "Order is everything: first the line goes dead (τ0), then you lock yourself in (τ1), and only then does the helper release its half-key (τ2). Each step slams a door behind the one before it.",
+      "Here's the sly part: the codenames double as evidence. You hold the codename meaning “this bit was 1”; the helper knows both codenames but not which one you hold. Hash yours and you're committed — changing your story would need the sibling codename, which only the helper ever saw.",
+      "Now blend it all down: fingerprint each chunk, fingerprint the list of fingerprints, up to one root covering the whole conversation. The helper signs that root — plus the bank's penned hello and the time. That signature is the wax seal, spelled out.",
+      "Finally the half-key is handed over and you can decrypt and read everything at leisure. Forging is still impossible: the line died at τ0, so there is nobody left to fool."
+    ],
     atkSub:0,
     margin:"encoding commitments + Merkle tree: tlsnotary's attestation format",
     attack:"Swap τ1 and τ2 and P — briefly holding the whole key against a live channel — re-encrypts chosen plaintext before committing. Drop H(handshake) from σ and any server's transcript can wear any other server's name.",
-    hence:"commit before reveal; bind identity inside the signature. The inequality is the security proof."
+    hence:"commit before reveal; bind identity inside the signature. The inequality is the security proof.",
+    attackP:"Hand the half-key over one step early and you'd briefly own a whole key against a live line — invent anything. Leave the pen-mark out of the seal, and any website could wear any other's name.",
+    henceP:"the doors close in order: hang up, lock in, then hand over."
   },
   {
     n:"Plate VI", title:"The Disclosure",
@@ -797,10 +852,18 @@ const PLATES = [
       "Lying about a revealed byte means producing a sibling label P never saw — they live only in N's memory. Success probability per bit: about 2^−128, give or take a hash.",
       "What the proof means is exactly this: bytes b_I at positions I, inside the sealed transcript, from this certificate, at this time. Meaning beyond position is interpretation — V must demand enough context (field names, headers) to fix the semantics."
     ],
+    plain:[
+      "The conversation is a row of bytes, each one separately committed. You choose which positions to show the landlord and ship: those bytes, their codenames, and the short fingerprint-chains up to the sealed root.",
+      "Everything else stays shut. Codenames are pure 128-bit static — the ones you reveal whisper nothing about the ones you keep dark.",
+      "Lying about a shown byte means conjuring its sibling codename out of thin air: 128 perfect coin flips. Give every grain of sand on Earth its own Earth's worth of sand — still fewer grains than possibilities.",
+      "One real warning: the math proves bytes-at-positions, not meaning. “4,210.77” floating alone could have sat under any label on the page. The landlord must demand the words around it."
+    ],
     atkSub:3,
     margin:"selective disclosure = commitments + positions; semantics is V's policy",
     attack:"Reveal “4,210.77” from offset 1093 and let the verifier assume which field it sat in. Position without context is a free lie — sound cryptography, unsound conclusion.",
-    hence:"required context is part of the verification predicate, not a courtesy."
+    hence:"required context is part of the verification predicate, not a courtesy.",
+    attackP:"Show a bare number and let the landlord guess which field it sat in. The cryptography is flawless and the conclusion is garbage.",
+    henceP:"context is part of the proof, not a politeness."
   },
   {
     n:"Plate VII", title:"The Verification",
@@ -809,10 +872,17 @@ const PLATES = [
       "Five conjunctive checks: σ verifies under pk_N over r || H(hs) || τ; the certificate chain reaches a root V trusts; CertificateVerify verifies under the certificate's key, binding Q_s to S; every Merkle path lands on r; every revealed label hashes into its c_i and decodes to its byte.",
       "If all five hold: the bytes at I were transmitted in a TLS session keyed to S's certificate at time τ, and could not have been authored by P alone. Stamp it."
     ],
+    plain:[
+      "The landlord sits alone with the envelope — no bank, no helper, no you. Verification is just arithmetic on its contents.",
+      "Five checks, all must pass: the seal's signature is genuine; the bank's ID chain reaches a trusted root; the bank's own pen-mark on the handshake checks out; every fingerprint-chain lands on the sealed root; every revealed codename hashes to its commitment.",
+      "All green: these bytes came from this bank's session at this time, and you could not have written them yourself. Stamp."
+    ],
     atkSub:1,
     margin:"offline, deterministic, milliseconds — no notary required at verify time",
     attack:"Skip any one clause and a theorem escapes: without CertificateVerify, σ only proves that N signed something — the binding to S evaporates entirely.",
-    hence:"the checklist is conjunctive — every clause carries its own part of the proof."
+    hence:"the checklist is conjunctive — every clause carries its own part of the proof.",
+    attackP:"Skip a single check and a hole opens: without the pen-check, the seal only proves the helper signed something — anything.",
+    henceP:"five checks, and every one carries weight."
   },
   {
     n:"Plate VIII", title:"The Bounds",
@@ -822,15 +892,27 @@ const PLATES = [
       "P+N collusion cannot be fixed in-protocol: σ is only a signature. Hence the dial: V chooses N; or demands t-of-n independent notaries, making forgery cost t simultaneous corruptions; or plays N itself — interactive verification, soundness with no third party at all.",
       "Out of scope, stated honestly: traffic metadata, message lengths, notary liveness — and truth itself. The proof establishes that S said it. Whether S was right is epistemology, not cryptography."
     ],
+    plain:[
+      "You, cheating alone: you'd need a whole key before the deadline (it never exists) or sibling codenames (they never left the helper). Your best odds are those 128 coin flips. The proof stands.",
+      "The helper, cheating alone: everything it ever saw was static — scrambled bytes, codenames, half-keys. It can sulk and refuse to finish, but it cannot read you, frame you, or replay you.",
+      "The two of you together could sign fiction — no mathematics detects loyalty. So the landlord turns the dial: accept only helpers it chose, demand several at once, or play the helper personally and trust no one at all.",
+      "Honest fine print: message sizes and timing still leak a little, the helper can simply be unavailable — and the proof says the bank SAID it, never that it's TRUE."
+    ],
     atkSub:2,
     margin:"verifier-as-notary ≡ the original DECO configuration",
     attack:"“Trust the notary” is not an argument — it is the residual assumption. Left unquantified it swallows the proof; quantified, it is one signature, t signatures, or zero.",
-    hence:"soundness against P is cryptography; soundness against N is a choice of quorum."
+    hence:"soundness against P is cryptography; soundness against N is a choice of quorum.",
+    attackP:"“Just trust the helper” is the one sentence the math cannot rescue. Unquantified, it swallows everything; quantified, it is one signature, several, or none.",
+    henceP:"against you: mathematics. against the helper: a quorum of the landlord's choosing."
   }
 ];
 const ROMAN = ["I","II","III","IV","V","VI","VII","VIII"];
 const LABELS = ["TAG","MODEL","ECDHE","2PC","COMMIT","REVEAL","VERIFY","BOUNDS"];
 const STEP_MS = 9000;
+
+let mode = "formal";
+try{ if(localStorage.getItem("tlsn-mode") === "plain") mode = "plain"; }catch(e){}
+if(location.search.indexOf("plain") !== -1) mode = "plain";
 
 const scenes  = document.querySelectorAll(".scene");
 const pipsBox = document.getElementById("pips");
@@ -841,6 +923,9 @@ const capMargin= document.getElementById("cap-margin");
 const capThreat   = document.getElementById("cap-threat");
 const threatBody  = document.getElementById("threat-body");
 const threatHence = document.getElementById("threat-hence");
+const threatLabel = document.getElementById("threat-label");
+const modeF = document.getElementById("mode-formal");
+const modeP = document.getElementById("mode-plain");
 const counter  = document.getElementById("counter");
 const playBtn  = document.getElementById("play");
 const bar      = document.getElementById("progressbar");
@@ -870,13 +955,7 @@ function go(p, s){
   if(plateChanged){
     scenes.forEach((sc,i)=> sc.classList.toggle("active", i===plate));
     pips.forEach((pp,i)=> pp.classList.toggle("active", i===plate));
-    capPlate.textContent = P.n;
-    capTitle.textContent = P.title;
-    capMargin.textContent = P.margin;
-    threatBody.textContent = P.attack;
-    threatHence.innerHTML  = "<b>hence ·</b> " + P.hence;
-    stepsBox.innerHTML = P.steps.map((t,i)=>
-      '<li class="cap-step"><span>' + (i+1) + '</span><div>' + t + '</div></li>').join("");
+    renderCaption(P);
     const head = capPlate.parentElement;
     head.classList.remove("cap-anim"); void head.offsetWidth; head.classList.add("cap-anim");
   }
@@ -897,6 +976,38 @@ function go(p, s){
   stepStart = performance.now();
   frozen = 0;
 }
+
+function renderCaption(P){
+  const plainOn = mode === "plain";
+  capPlate.textContent = P.n;
+  capTitle.textContent = P.title;
+  capMargin.textContent = P.margin;
+  threatLabel.textContent = plainOn ? "† the attack, plainly" : "† the attack, formally";
+  threatBody.textContent = plainOn ? P.attackP : P.attack;
+  threatHence.innerHTML  = "<b>hence ·</b> " + (plainOn ? P.henceP : P.hence);
+  const steps = plainOn ? P.plain : P.steps;
+  stepsBox.innerHTML = steps.map((t,i)=>
+    '<li class="cap-step"><span>' + (i+1) + '</span><div>' + t + '</div></li>').join("");
+}
+
+function setMode(m){
+  if(mode === m) return;
+  mode = m;
+  try{ localStorage.setItem("tlsn-mode", m); }catch(e){}
+  modeF.classList.toggle("active", m === "formal");
+  modeP.classList.toggle("active", m === "plain");
+  if(plate >= 0){
+    renderCaption(PLATES[plate]);
+    stepsBox.querySelectorAll(".cap-step").forEach((li,i)=>{
+      li.classList.toggle("now",  i === sub);
+      li.classList.toggle("done", i < sub);
+    });
+  }
+}
+modeF.addEventListener("click", ()=> setMode("formal"));
+modeP.addEventListener("click", ()=> setMode("plain"));
+modeF.classList.toggle("active", mode === "formal");
+modeP.classList.toggle("active", mode === "plain");
 
 function next(){
   if(sub + 1 < PLATES[plate].steps.length) go(plate, sub + 1);
