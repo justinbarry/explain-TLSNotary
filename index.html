@@ -104,6 +104,13 @@ h1 em{font-style:italic;font-weight:560}
   font-size:clamp(13px,1.7vmin,17.5px);
   color:var(--ink-soft);
 }
+.alt-link{margin-top:6px}
+.alt-link a{
+  font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--wax);text-decoration:none;
+  border-bottom:1px dotted var(--wax);padding-bottom:1px;
+}
+.alt-link a:hover{color:var(--wax-deep);border-bottom-style:solid}
 .mast-rule{
   display:flex;align-items:center;gap:14px;margin-top:clamp(6px,1vmin,12px);
   color:var(--ink-soft);
@@ -556,6 +563,7 @@ text[text-anchor="end"]{text-anchor:end}
       <div class="overline">A protocol told as a story <span class="fleuron">❧</span> in eight plates</div>
       <h1>TLS<em>Notary</em></h1>
       <div class="subtitle">or, How to prove what a website told you — without trusting the teller.</div>
+      <div class="alt-link"><a href="advanced.html">☞ for the advanced reader — the mathematical appendix</a></div>
       <div class="mast-rule"><span>✦</span></div>
     </header>
 
