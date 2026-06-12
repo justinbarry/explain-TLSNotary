@@ -198,6 +198,14 @@ text[text-anchor="end"]{text-anchor:end}
 }
 .legend-item b{display:block;font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--wax);margin-bottom:1px}
 .legend-item span{display:block;font-family:var(--serif);font-style:italic;font-size:11.5px;color:var(--ink-soft);line-height:1.35}
+.primer{border-top:1px solid var(--hair);padding-top:clamp(8px,1.2vmin,14px)}
+.primer-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(12px,1.8vmin,22px) clamp(18px,2.6vmin,36px)}
+.primer-item{padding-left:14px;border-left:2px solid rgba(143,115,37,.55)}
+.primer-item h3{font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--ink);margin-bottom:4px}
+.primer-item h3 i{font-style:normal;color:var(--wax);margin-right:.6em}
+.primer-item p{font-size:13px;line-height:1.5;color:#4a4232;max-width:60ch}
+.primer-item p code{font-family:var(--mono);font-size:11.5px;color:var(--ink)}
+@media (max-width:860px){.primer-grid{grid-template-columns:1fr}}
 .colophon{text-align:center;font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--ink-faint);padding-top:clamp(6px,1vmin,10px)}
 .colophon a{color:inherit}
 
@@ -232,6 +240,7 @@ text[text-anchor="end"]{text-anchor:end}
       <h1>TLS<em>Notary</em></h1>
       <div class="subtitle">The Mathematical Appendix — what the blindfold, the stamps, and the seal are made of.</div>
       <div class="alt-link"><a href="./">☜ prefer a story? read the illustrated edition</a></div>
+      <div class="alt-link" style="margin-top:4px"><a href="#primer">↓ new to all of it? the first-principles primer awaits below</a></div>
       <div class="mode-toggle" role="group" aria-label="Reading register">
         <button class="mode-btn" id="mode-formal">formal</button>
         <button class="mode-btn" id="mode-plain">plain words</button>
@@ -722,6 +731,44 @@ text[text-anchor="end"]{text-anchor:end}
         <div class="legend-item">
           <div class="legend-chip">τ0&lt;τ1&lt;τ2</div>
           <div><b>the ordering</b><span>close, commit, release — the inequality that makes forgery impossible</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="primer" id="primer" aria-label="First principles">
+      <div class="legend-title">❦ &nbsp;first principles — eight ideas, no prerequisites&nbsp; ❦</div>
+      <div class="primer-grid">
+        <div class="primer-item">
+          <h3><i>i.</i>the keyed checksum</h3>
+          <p>A MAC is a checksum with a secret ingredient: <code>tag = f(message, k)</code>. Picture &ldquo;add up all the letters, then mix in a secret number&rdquo; — engineered so well that nobody can adjust a message and keep the sum. The fine print that drives this whole site: making and checking use the same <code>k</code>. Whoever can verify can also forge.</p>
+        </div>
+        <div class="primer-item">
+          <h3><i>ii.</i>the one-way hop</h3>
+          <p>An elliptic curve is a strange billiard table with one legal move: hop. Hopping n times forward is fast; counting n from a landing spot is hopeless — that lopsidedness is the security. Two people hop secretly, publish landing spots, then apply their own hops to the other's spot: both reach the same shared secret while eavesdroppers stay lost. Bonus fact the protocol leans on: hops add, so two people hopping can pose as one visitor.</p>
+        </div>
+        <div class="primer-item">
+          <h3><i>iii.</i>secret sharing</h3>
+          <p>Split a secret so each piece alone is static. If the secret is 1000, one party holds 723, the other 277. Every key here lives like that: <code>k = k_P ⊕ k_N</code>, where <code>⊕</code> combines bits like letter-by-letter coin flips — one share is pure noise, the other is the key hidden under exactly that noise. Together the noise cancels; apart, neither share says a word.</p>
+        </div>
+        <div class="primer-item">
+          <h3><i>iv.</i>computing in codenames</h3>
+          <p>A garbled circuit turns computation into a maze of locked boxes. Every wire gets two random codenames — one secretly means 0, one means 1. Each logic gate becomes four boxes, openable only by the right pair of input codenames, yielding the output's codename. The evaluator walks the entire circuit — AES included — seeing only gibberish. Oblivious transfer handles the first step: fetching the codename for your own secret bit from two sealed envelopes, without the sender learning which one you took.</p>
+        </div>
+        <div class="primer-item">
+          <h3><i>v.</i>the blender and the tree</h3>
+          <p>A hash is a blender: any input, one fixed 32-byte smoothie. Same input, same smoothie; change one byte and it's unrecognizable; and there is no un-blending. A Merkle tree blends in layers — fingerprint each chunk, then fingerprint the list of fingerprints — until one root vouches for everything. To prove one chunk belongs, reveal it plus a short chain of fingerprints: surgical proof, nothing else exposed.</p>
+        </div>
+        <div class="primer-item">
+          <h3><i>vi.</i>the sealed envelope</h3>
+          <p>A commitment is an answer locked away in advance: publish <code>H(value)</code> now, and you can neither change the value later (binding) nor have shown it yet (hiding). TLSNotary gets its envelopes free: the codename you hold for each bit <em>is</em> the commitment — lying would take the sibling codename, which only the helper ever saw.</p>
+        </div>
+        <div class="primer-item">
+          <h3><i>vii.</i>the size of can't</h3>
+          <p>Security claims end in numbers like <code>2^-128</code> — one chance in roughly 3.4 × 10<sup>38</sup>. Give every grain of sand on Earth its own Earth's worth of sand and count everything: still short. A billion computers guessing a billion times a second since the Big Bang cover under a millionth of the space. When cryptographers say impossible, they mean this — not &ldquo;very hard.&rdquo;</p>
+        </div>
+        <div class="primer-item">
+          <h3><i>viii.</i>one key, or two</h3>
+          <p>The stamp (a MAC) uses one key to make and to check — fast, but it convinces only key-holders. The pen (a signature) splits the powers: a private key writes, a public key checks, so strangers can verify what only one party could have written. TLS uses the pen once, at the handshake, and stamps everything after — TLSNotary is the machine that lifts those stamped bytes up to pen-grade evidence.</p>
         </div>
       </div>
     </section>
