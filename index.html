@@ -493,6 +493,31 @@ text[text-anchor="end"]{text-anchor:end}
 .progress{position:relative;height:2px;margin:2px 0 0;background:rgba(34,29,18,.12)}
 .progress i{position:absolute;inset:0;background:var(--wax);transform-origin:left;transform:scaleX(0)}
 
+/* key to the plates */
+.legend{border-top:1px solid var(--hair);padding-top:clamp(8px,1.2vmin,14px)}
+.legend-title{
+  font-family:var(--mono);font-size:9px;font-weight:600;
+  letter-spacing:.34em;text-transform:uppercase;color:var(--ink-soft);
+  text-align:center;margin-bottom:12px;
+}
+.legend-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px clamp(14px,2.2vmin,30px)}
+.legend-item{display:flex;gap:11px;align-items:center}
+.legend-item svg{width:36px;height:36px;flex:none}
+.legend-chip{
+  flex:none;font-family:var(--mono);font-size:10px;font-weight:600;
+  border:1.5px solid var(--ink);border-radius:4px;padding:8px 5px;color:var(--ink);
+}
+.legend-item b{
+  display:block;font-family:var(--mono);font-size:9.5px;font-weight:600;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--wax);margin-bottom:1px;
+}
+.legend-item span{
+  display:block;font-family:var(--serif);font-style:italic;
+  font-size:11.5px;color:var(--ink-soft);line-height:1.35;
+}
+@media (max-width:900px){.legend-grid{grid-template-columns:1fr 1fr}}
+@media (max-width:600px){.legend-grid{grid-template-columns:1fr}}
+
 /* colophon */
 .colophon{
   text-align:center;
@@ -593,6 +618,17 @@ text[text-anchor="end"]{text-anchor:end}
             <rect x="-3" y="-19" width="6" height="9" fill="var(--ink)"/>
             <path d="M-16,-10 h32 l5,10 h-42 z" fill="var(--paper-hi)" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round"/>
             <rect x="-22" y="3" width="44" height="5" rx="2" fill="var(--ink)"/>
+          </g>
+          <!-- fountain pen -->
+          <g id="sym-pen">
+            <path d="M-13,13 L-10,4 L8,-14 a4,4 0 0 1 6,6 L-4,10 Z" fill="var(--paper-hi)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M-10,4 L-4,10" stroke="var(--ink)" stroke-width="1.6"/>
+            <path d="M-13,13 l-3.5,3.5" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round"/>
+          </g>
+          <!-- blindfold -->
+          <g id="sym-blindfold">
+            <rect x="-14" y="-5" width="28" height="10" rx="2.5" fill="var(--ink)"/>
+            <path d="M14,-3 l6,-3 M14,2 l7,2" stroke="var(--ink)" stroke-width="1.8" stroke-linecap="round"/>
           </g>
           <!-- padlock -->
           <g id="sym-lock">
@@ -1169,6 +1205,36 @@ text[text-anchor="end"]{text-anchor:end}
       <div class="counter" id="counter"></div>
     </nav>
 
+    <section class="legend" aria-label="Key to the plates">
+      <div class="legend-title">❦ &nbsp;key to the plates — what the pictures really are&nbsp; ❦</div>
+      <div class="legend-grid">
+        <div class="legend-item">
+          <svg viewBox="-26 -32 52 46"><use href="#sym-stamp"/></svg>
+          <div><b>the rubber stamp</b><span>the MAC key — shared, so either side can make the very same mark</span></div>
+        </div>
+        <div class="legend-item">
+          <svg viewBox="-21 -20 42 40"><use href="#sym-pen"/></svg>
+          <div><b>the bank's pen</b><span>the certificate's private key — only the bank writes it; anyone can check it</span></div>
+        </div>
+        <div class="legend-item">
+          <svg viewBox="-32 -32 64 64"><use href="#sym-seal"/></svg>
+          <div><b>the wax seal</b><span>the helper's (the notary's) signature over the finished bundle</span></div>
+        </div>
+        <div class="legend-item">
+          <svg viewBox="540 126 130 48"><use href="#sym-key-L"/><use href="#sym-key-R"/></svg>
+          <div><b>the split key</b><span>the TLS session key — born in two shares, never whole in one hand</span></div>
+        </div>
+        <div class="legend-item">
+          <div class="legend-chip">ab93…</div>
+          <div><b>the fingerprints</b><span>cryptographic hashes — change one byte and they change completely</span></div>
+        </div>
+        <div class="legend-item">
+          <svg viewBox="-22 -14 44 28"><use href="#sym-blindfold"/></svg>
+          <div><b>the blindfold</b><span>MPC — the helper computes on scrambled bytes, and only scrambled bytes</span></div>
+        </div>
+      </div>
+    </section>
+
     <div class="colophon">
       AFTER THE TLSNOTARY PROTOCOL · MPC-TLS WITH SELECTIVE DISCLOSURE · TLSNOTARY.ORG
       &nbsp;✦&nbsp; THE NOTARY MAY DOUBLE AS THE VERIFIER — IT STILL SEES NOTHING
@@ -1209,7 +1275,7 @@ const PLATES = [
     n:"Plate III", title:"The Split Key",
     steps:[
       "You and the blindfolded helper knock on the bank's door together, pretending to be one single visitor.",
-      "\u201cHello, bank!\u201d The bank says hello back \u2014 showing its ID card, signed with its very own pen, the one nobody else has. Remember that pen.",
+      "\u201cHello, bank!\u201d The bank says hello back \u2014 showing its ID card, signed with its very own pen, the one nobody else has. A pen is not a stamp: anyone can recognize its writing, but only the bank can write it. Remember that pen.",
       "Now a secret key is made for this conversation\u2026",
       "\u2026and a math trick snaps it in two before anyone can grab it. You hold one half, the helper holds the other. A half key can't lock, unlock, or stamp anything alone.",
       "Could anyone glue the whole key back together? Never. Whoever held it could cheat \u2014 so nobody ever does."
@@ -1238,7 +1304,7 @@ const PLATES = [
       "You hang up on the bank. The conversation is finished \u2014 nothing new can ever sneak into it.",
       "You take fingerprints of everything that was said: little codes that change completely if even one letter changes. The bank's signed hello goes in too.",
       "Wait \u2014 couldn't the helper hand over their half of the key now? Not yet! Until everything is sealed, a whole key is still dangerous. Blocked.",
-      "The helper presses their big red wax seal onto the fingerprints, plus today's date \u2014 vouching for a conversation they never read.",
+      "The helper presses their big red wax seal onto the fingerprints, plus today's date \u2014 vouching for a conversation they never read. The seal is the helper's own signature: their pen, not yours, not the bank's.",
       "Only now, with everything sealed and the line dead, do they hand over their half. It's harmless \u2014 a key to a finished conversation can't fake a thing."
     ],
     atkSub:2,
