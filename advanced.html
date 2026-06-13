@@ -206,6 +206,46 @@ text[text-anchor="end"]{text-anchor:end}
 .primer-item p{font-size:13px;line-height:1.5;color:#4a4232;max-width:60ch}
 .primer-item p code{font-family:var(--mono);font-size:11.5px;color:var(--ink)}
 @media (max-width:860px){.primer-grid{grid-template-columns:1fr}}
+
+/* the primer, animated */
+.lab{border-top:1px solid var(--hair);padding-top:clamp(8px,1.2vmin,14px)}
+.lab-tabs{display:flex;flex-wrap:wrap;justify-content:center;gap:4px;margin-bottom:10px}
+.lab-tab{
+  appearance:none;background:none;cursor:pointer;font-family:var(--mono);
+  font-size:10px;font-weight:600;letter-spacing:.1em;color:var(--ink-soft);
+  border:1px solid transparent;border-radius:2px;padding:6px 10px 5px;transition:all .18s;
+}
+.lab-tab:hover{color:var(--ink);border-color:var(--hair)}
+.lab-tab.active{background:var(--brass);border-color:var(--brass);color:var(--paper-hi)}
+.lab-tab .lab-tab-name{display:block;font-size:7.5px;font-weight:500;letter-spacing:.16em;opacity:.75;margin-top:2px;text-transform:uppercase}
+.lab-stage{border:1px solid var(--hair);border-radius:5px;background:rgba(248,241,226,.5)}
+.lab-stage svg{display:block;width:100%;height:auto}
+.lab-scene{display:none}
+.lab-scene.active{display:block}
+.lab-bar{display:flex;align-items:center;justify-content:center;gap:14px;padding-top:9px}
+.lab-cap{font-family:var(--serif);font-style:italic;font-size:13px;color:var(--ink-soft);text-align:center;min-width:24ch}
+
+@keyframes labSplitL{to{transform:translate(-170px,80px)}}
+@keyframes labSplitR{to{transform:translate(170px,80px)}}
+@keyframes labHop{
+  0%{transform:translate(0,0)}
+  20%{transform:translate(120px,-140px)}
+  40%{transform:translate(260px,-20px)}
+  60%{transform:translate(400px,-160px)}
+  80%{transform:translate(520px,-40px)}
+  100%{transform:translate(600px,-100px)}
+}
+@keyframes labConvA{to{transform:translate(550px,-140px)}}
+@keyframes labConvB{to{transform:translate(50px,-160px)}}
+@keyframes labInto{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(215px,8px) scale(.45)}}
+@keyframes labCover{to{transform:scaleX(0)}}
+.lab-splitL{transform-box:fill-box;animation:labSplitL .9s cubic-bezier(.4,.1,.3,1) forwards 1s}
+.lab-splitR{transform-box:fill-box;animation:labSplitR .9s cubic-bezier(.4,.1,.3,1) forwards 1s}
+.lab-ball{transform-box:fill-box;animation:labHop 1.7s ease-in-out forwards .4s}
+.lab-convA{transform-box:fill-box;animation:labConvA 1s ease-in-out forwards 4.6s}
+.lab-convB{transform-box:fill-box;animation:labConvB 1s ease-in-out forwards 4.6s}
+.lab-into{transform-box:fill-box;animation:labInto 1s ease-in forwards 1.3s}
+.lab-cover{transform-box:fill-box;transform-origin:right center;animation:labCover 2.4s steps(44) forwards .8s}
 .colophon{text-align:center;font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--ink-faint);padding-top:clamp(6px,1vmin,10px)}
 .colophon a{color:inherit}
 
@@ -222,7 +262,7 @@ text[text-anchor="end"]{text-anchor:end}
 }
 @media (max-width:600px){.legend-grid{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){
-  .stage *{animation-duration:.01s !important;animation-delay:0s !important;animation-iteration-count:1 !important}
+  .stage *,.lab-stage *{animation-duration:.01s !important;animation-delay:0s !important;animation-iteration-count:1 !important}
   .cap-anim{animation:none}
   .cap-threat{opacity:1}
   .cap-threat.revealed{animation:none}
@@ -773,6 +813,275 @@ text[text-anchor="end"]{text-anchor:end}
       </div>
     </section>
 
+    <section class="lab" id="lab" aria-label="The primer, animated">
+      <div class="legend-title">❦ &nbsp;the primer, animated — watch each idea work&nbsp; ❦</div>
+      <div class="lab-tabs" id="lab-tabs"></div>
+      <div class="lab-stage">
+        <svg viewBox="0 0 1200 420" role="img" aria-label="Animated illustrations of the eight first principles">
+          <defs>
+            <g id="lab-stamp">
+              <circle cy="-23" r="5" fill="var(--ink)"/>
+              <rect x="-3" y="-19" width="6" height="9" fill="var(--ink)"/>
+              <path d="M-16,-10 h32 l5,10 h-42 z" fill="var(--paper-hi)" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round"/>
+              <rect x="-22" y="3" width="44" height="5" rx="2" fill="var(--ink)"/>
+            </g>
+            <g id="lab-pen">
+              <path d="M-13,13 L-10,4 L8,-14 a4,4 0 0 1 6,6 L-4,10 Z" fill="var(--paper-hi)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M-10,4 L-4,10" stroke="var(--ink)" stroke-width="1.6"/>
+              <path d="M-13,13 l-3.5,3.5" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round"/>
+            </g>
+            <g id="lab-key">
+              <circle cx="-12" cy="0" r="7" fill="none" stroke-width="3.4"/>
+              <path d="M-5,0 L16,0 M9,0 L9,7 M15,0 L15,6" fill="none" stroke-width="3.4" stroke-linecap="round"/>
+            </g>
+          </defs>
+
+          <!-- i · the keyed checksum -->
+          <g class="lab-scene">
+            <g class="fade" style="animation-delay:.1s">
+              <g style="font-family:var(--mono)" font-size="22" text-anchor="middle">
+                <rect x="320" y="36" width="56" height="48" rx="5" fill="var(--paper-hi)" stroke="var(--ink)" stroke-width="1.6"/><text x="348" y="68" fill="var(--ink)">H</text>
+                <rect x="384" y="36" width="56" height="48" rx="5" fill="var(--paper-hi)" stroke="var(--ink)" stroke-width="1.6"/><text x="412" y="68" fill="var(--ink)">E</text>
+                <rect x="448" y="36" width="56" height="48" rx="5" fill="var(--paper-hi)" stroke="var(--ink)" stroke-width="1.6"/><text x="476" y="68" fill="var(--ink)">L</text>
+                <rect x="512" y="36" width="56" height="48" rx="5" fill="var(--paper-hi)" stroke="var(--ink)" stroke-width="1.6"/><text x="540" y="68" fill="var(--ink)">L</text>
+                <rect x="576" y="36" width="56" height="48" rx="5" fill="var(--paper-hi)" stroke="var(--ink)" stroke-width="1.6"/><text x="604" y="68" fill="var(--ink)">O</text>
+              </g>
+            </g>
+            <g class="fade" style="animation-delay:.8s"><text x="476" y="124" class="t-eq-s">H+E+L+L+O → 52</text></g>
+            <g class="fade" style="animation-delay:1.4s"><text x="476" y="148" class="t-eq-s" style="fill:var(--brass)">+ secret k = 19</text></g>
+            <g class="stamped" style="animation-delay:2.1s;--tilt:-4deg">
+              <rect x="710" y="100" width="150" height="40" rx="5" fill="none" stroke="var(--verd)" stroke-width="2.5"/>
+              <text x="785" y="125" class="t-eq-s" style="fill:var(--verd)">tag = 71</text>
+            </g>
+            <g class="fade" style="animation-delay:3.2s">
+              <rect x="512" y="36" width="56" height="48" rx="5" fill="rgba(158,47,35,.12)" stroke="var(--wax)" stroke-width="2"/>
+              <text x="540" y="68" style="font-family:var(--mono);fill:var(--wax)" font-size="22" text-anchor="middle">X</text>
+            </g>
+            <g class="fade" style="animation-delay:3.7s"><text x="600" y="210" class="t-eq-s" style="fill:var(--wax)">sum is now 55 → tag 74 ≠ 71 — tampering caught. good.</text></g>
+            <g class="fade" style="animation-delay:5s"><text x="600" y="268" class="t-eq-s">…but you hold k = 19 as well:</text></g>
+            <g class="fade" style="animation-delay:5.7s">
+              <rect x="380" y="290" width="270" height="42" rx="5" fill="none" stroke="var(--wax)" stroke-width="2" stroke-dasharray="6 4"/>
+              <text x="515" y="317" style="font-family:var(--mono);fill:var(--wax)" font-size="15" text-anchor="middle">"ONE MILLION"</text>
+              <text x="760" y="317" class="t-eq-s" style="fill:var(--wax)">→ tag = 88 · checks out ✓</text>
+            </g>
+            <g class="fade" style="animation-delay:6.6s"><text x="600" y="386" class="t-note">Whoever can check can also cook. Same ingredient, same powers.</text></g>
+          </g>
+
+          <!-- ii · the one-way hop -->
+          <g class="lab-scene">
+            <g class="fade" style="animation-delay:.1s">
+              <rect x="240" y="50" width="740" height="250" rx="18" fill="none" stroke="var(--hair)" stroke-width="1.6"/>
+              <text x="262" y="76" class="t-mono-s" text-anchor="start">the curve, as a billiard table</text>
+            </g>
+            <g class="fade" style="animation-delay:.5s"><circle cx="300" cy="260" r="5" fill="var(--ink-faint)"/></g>
+            <g class="fade" style="animation-delay:.75s"><circle cx="420" cy="120" r="5" fill="var(--ink-faint)"/></g>
+            <g class="fade" style="animation-delay:1s"><circle cx="560" cy="240" r="5" fill="var(--ink-faint)"/></g>
+            <g class="fade" style="animation-delay:1.25s"><circle cx="700" cy="100" r="5" fill="var(--ink-faint)"/></g>
+            <g class="fade" style="animation-delay:1.5s"><circle cx="820" cy="220" r="5" fill="var(--ink-faint)"/></g>
+            <circle class="lab-ball" cx="300" cy="260" r="10" fill="var(--brass)"/>
+            <g class="fade" style="animation-delay:2.3s"><text x="600" y="330" class="t-eq-s">forward: 5 hops, instant.</text></g>
+            <g class="fade" style="animation-delay:3.1s">
+              <text x="940" y="150" class="t-eq" style="fill:var(--wax)">?</text>
+              <text x="600" y="358" class="t-eq-s" style="fill:var(--wax)">backward — how many hops landed here? uncountable.</text>
+            </g>
+            <g class="fade" style="animation-delay:4.4s"><circle cx="350" cy="300" r="8" fill="var(--ink)"/><text x="350" y="324" class="t-mono-s">your secret hops</text></g>
+            <g class="fade" style="animation-delay:4.4s"><circle cx="850" cy="320" r="8" fill="var(--wax)"/><text x="850" y="344" class="t-mono-s">the bank's secret hops</text></g>
+            <circle class="lab-convA" cx="350" cy="300" r="8" fill="var(--ink)"/>
+            <circle class="lab-convB" cx="850" cy="320" r="8" fill="var(--wax)"/>
+            <g class="fade" style="animation-delay:5.7s">
+              <circle cx="900" cy="160" r="17" fill="none" stroke="var(--verd)" stroke-width="2.5"/>
+              <text x="600" y="396" class="t-note">Two private hop-counts, one shared landing spot — a secret agreed in public.</text>
+            </g>
+          </g>
+
+          <!-- iii · secret sharing -->
+          <g class="lab-scene">
+            <g class="fade" style="animation-delay:.2s">
+              <rect x="500" y="40" width="200" height="44" rx="5" fill="var(--paper-hi)" stroke="var(--ink)" stroke-width="1.8"/>
+              <text x="600" y="68" class="t-eq-s">secret = 1000</text>
+            </g>
+            <g class="lab-splitL" style="opacity:1">
+              <rect x="500" y="40" width="92" height="44" rx="5" fill="var(--paper-hi)" stroke="var(--ink)" stroke-width="1.8"/>
+              <text x="546" y="68" class="t-eq-s">723</text>
+            </g>
+            <g class="lab-splitR" style="opacity:1">
+              <rect x="608" y="40" width="92" height="44" rx="5" fill="var(--paper-hi)" stroke="var(--brass)" stroke-width="1.8"/>
+              <text x="654" y="68" class="t-eq-s" style="fill:var(--brass)">277</text>
+            </g>
+            <g class="fade" style="animation-delay:2.1s">
+              <text x="422" y="180" class="t-mono-s">alone: meaningless</text>
+              <text x="778" y="180" class="t-mono-s">alone: meaningless</text>
+            </g>
+            <g class="fade" style="animation-delay:2.9s"><text x="600" y="226" class="t-eq-s" style="fill:var(--verd)">together: 723 + 277 = 1000 ✓</text></g>
+            <g class="fade" style="animation-delay:3.8s"><text x="600" y="286" class="t-eq-s">the bitwise version, with coin flips:</text></g>
+            <g class="fade" style="animation-delay:4.3s"><text x="600" y="316" class="t-eq-s">key&#160;&#160;&#160;&#160;&#160;1011 0100</text></g>
+            <g class="fade" style="animation-delay:4.8s"><text x="600" y="340" class="t-eq-s">noise ⊕ 0110 1101</text></g>
+            <g class="fade" style="animation-delay:5.3s"><text x="600" y="364" class="t-eq-s" style="fill:var(--brass)">share&#160;&#160;= 1101 1001</text></g>
+            <g class="fade" style="animation-delay:6s"><text x="600" y="400" class="t-note">Each row alone looks like static. Only the pair means anything.</text></g>
+          </g>
+
+          <!-- iv · computing in codenames -->
+          <g class="lab-scene">
+            <g class="fade" style="animation-delay:.1s">
+              <path d="M260,70 h44 a36,36 0 0 1 0,72 h-44 z" fill="var(--paper-hi)" stroke="var(--ink)" stroke-width="2.2"/>
+              <text x="298" y="112" class="t-mono" font-weight="600">AND</text>
+              <line x1="216" y1="86" x2="260" y2="86" stroke="var(--ink)" stroke-width="2"/>
+              <line x1="216" y1="126" x2="260" y2="126" stroke="var(--ink)" stroke-width="2"/>
+              <line x1="340" y1="106" x2="386" y2="106" stroke="var(--ink)" stroke-width="2"/>
+            </g>
+            <g class="anim" style="animation-delay:.5s"><text x="206" y="90" class="t-mono-s" text-anchor="end">ZEBRA·7</text></g>
+            <g class="anim" style="animation-delay:.8s"><text x="206" y="130" class="t-mono-s" text-anchor="end">PLUM·3</text></g>
+            <g class="fade" style="animation-delay:1.3s">
+              <g style="font-family:var(--mono)" font-size="11" text-anchor="middle">
+                <rect x="460" y="60" width="120" height="40" rx="4" fill="var(--paper-hi)" stroke="var(--ink)" stroke-width="1.5"/><text x="520" y="85" fill="var(--ink-soft)">box · 9f3a…</text>
+                <rect x="600" y="60" width="120" height="40" rx="4" fill="var(--paper-hi)" stroke="var(--ink)" stroke-width="1.5"/><text x="660" y="85" fill="var(--ink-soft)">box · 02e1…</text>
+                <rect x="740" y="60" width="120" height="40" rx="4" fill="var(--paper-hi)" stroke="var(--ink)" stroke-width="1.5"/><text x="800" y="85" fill="var(--ink-soft)">box · 77be…</text>
+                <rect x="880" y="60" width="120" height="40" rx="4" fill="var(--paper-hi)" stroke="var(--ink)" stroke-width="1.5"/><text x="940" y="85" fill="var(--ink-soft)">box · aa90…</text>
+              </g>
+            </g>
+            <g class="fade" style="animation-delay:2.2s">
+              <rect x="598" y="58" width="124" height="44" rx="5" fill="none" stroke="var(--verd)" stroke-width="2.5"/>
+              <text x="660" y="130" class="t-mono-s" style="fill:var(--verd)">your pair opens this one</text>
+            </g>
+            <g class="fade" style="animation-delay:2.9s"><text x="660" y="158" class="t-eq-s" style="fill:var(--verd)">→ output codename: FOG·9</text></g>
+            <g class="fade" style="animation-delay:3.5s"><text x="600" y="196" class="t-mono-s">the other three boxes never open — the wrong paths stay dark</text></g>
+            <g class="fade" style="animation-delay:4.4s">
+              <text x="430" y="262" class="t-eq-s" text-anchor="start">and your first codename arrives by oblivious transfer:</text>
+              <rect x="470" y="284" width="90" height="56" rx="4" fill="var(--paper-hi)" stroke="var(--ink)" stroke-width="1.6"/>
+              <path d="M470,284 L515,316 L560,284" fill="none" stroke="var(--ink)" stroke-width="1.4"/>
+              <rect x="590" y="284" width="90" height="56" rx="4" fill="var(--paper-hi)" stroke="var(--verd)" stroke-width="2"/>
+              <path d="M590,284 L635,316 L680,284" fill="none" stroke="var(--verd)" stroke-width="1.6"/>
+              <text x="745" y="318" class="t-eq-s" text-anchor="start" style="fill:var(--verd)">→ yours ✓</text>
+            </g>
+            <g class="fade" style="animation-delay:5.4s"><text x="600" y="392" class="t-note">Two envelopes offered; you take exactly one; the sender provably can't tell which.</text></g>
+          </g>
+
+          <!-- v · the blender and the tree -->
+          <g class="lab-scene">
+            <g class="fade" style="animation-delay:.1s">
+              <rect x="200" y="62" width="140" height="38" rx="4" fill="var(--paper-hi)" stroke="var(--ink)" stroke-width="1.5"/>
+              <text x="270" y="86" class="t-mono-s">hello world</text>
+              <path d="M348,81 L390,81" stroke="var(--ink)" stroke-width="1.6" marker-end="none"/>
+              <path d="M398,62 l36,0 -8,38 -20,0 z" fill="var(--paper-hi)" stroke="var(--ink)" stroke-width="1.8"/>
+              <text x="416" y="118" class="t-mono-s">blender</text>
+            </g>
+            <g class="stamped" style="animation-delay:.9s;--tilt:0deg">
+              <rect x="470" y="62" width="150" height="38" rx="4" fill="none" stroke="var(--ink)" stroke-width="1.8"/>
+              <text x="545" y="86" class="t-mono-s">ab93…6f02</text>
+            </g>
+            <g class="fade" style="animation-delay:1.8s">
+              <rect x="200" y="142" width="140" height="38" rx="4" fill="var(--paper-hi)" stroke="var(--wax)" stroke-width="1.5"/>
+              <text x="270" y="166" class="t-mono-s">hello worl<tspan style="fill:var(--wax)" font-weight="600">e</tspan></text>
+            </g>
+            <g class="stamped" style="animation-delay:2.6s;--tilt:0deg">
+              <rect x="470" y="142" width="150" height="38" rx="4" fill="none" stroke="var(--wax)" stroke-width="1.8"/>
+              <text x="545" y="166" class="t-mono-s" style="fill:var(--wax)">f102…9c44</text>
+            </g>
+            <g class="fade" style="animation-delay:3.3s"><text x="412" y="218" class="t-mono-s">one byte changed → nothing survives</text></g>
+            <g class="anim" style="animation-delay:4.2s">
+              <line x1="790" y1="300" x2="880" y2="240" class="hairline" stroke-width="1.6"/>
+              <line x1="970" y1="300" x2="880" y2="240" class="hairline" stroke-width="1.6"/>
+              <line x1="880" y1="240" x2="880" y2="180" class="hairline" stroke-width="1.6"/>
+              <text x="790" y="324" class="t-eq-s">c0</text>
+              <text x="970" y="324" class="t-eq-s">c1</text>
+              <circle cx="880" cy="166" r="13" fill="none" stroke="var(--ink)" stroke-width="2"/>
+              <text x="880" y="171" class="t-eq-s">r</text>
+            </g>
+            <g class="fade" style="animation-delay:5s">
+              <line x1="790" y1="300" x2="880" y2="240" stroke="var(--verd)" stroke-width="2.4"/>
+              <line x1="880" y1="240" x2="880" y2="180" stroke="var(--verd)" stroke-width="2.4"/>
+              <text x="880" y="356" class="t-mono-s" style="fill:var(--verd)">prove one chunk with one short chain</text>
+            </g>
+            <g class="fade" style="animation-delay:5.8s"><text x="600" y="400" class="t-note">No un-blending, ever — and one root smoothie vouches for the whole pantry.</text></g>
+          </g>
+
+          <!-- vi · the sealed envelope -->
+          <g class="lab-scene">
+            <g class="fade" style="animation-delay:.2s">
+              <rect x="350" y="80" width="86" height="42" rx="5" fill="var(--paper-hi)" stroke="var(--ink)" stroke-width="1.8"/>
+              <text x="393" y="107" class="t-eq-s">1000</text>
+            </g>
+            <g class="fade" style="animation-delay:.6s">
+              <rect x="560" y="70" width="150" height="84" rx="5" fill="var(--paper-hi)" stroke="var(--ink)" stroke-width="2"/>
+              <path d="M560,70 L635,118 L710,70" fill="none" stroke="var(--ink)" stroke-width="1.6"/>
+            </g>
+            <g class="lab-into" style="opacity:1">
+              <rect x="350" y="80" width="86" height="42" rx="5" fill="var(--paper-hi)" stroke="var(--ink)" stroke-width="1.8"/>
+              <text x="393" y="107" class="t-eq-s">1000</text>
+            </g>
+            <g class="stamped" style="animation-delay:2.2s;--tilt:9deg"><circle cx="635" cy="118" r="11" fill="var(--wax)"/></g>
+            <g class="fade" style="animation-delay:2.8s">
+              <rect x="790" y="80" width="190" height="42" rx="5" fill="none" stroke="var(--ink)" stroke-width="1.6"/>
+              <text x="885" y="107" class="t-eq-s">H = 9f3a…</text>
+              <text x="885" y="142" class="t-mono-s">published — public, but opaque</text>
+            </g>
+            <g class="fade" style="animation-delay:4s"><text x="600" y="218" class="t-eq-s">…much later, opening day:</text></g>
+            <g class="fade" style="animation-delay:4.6s"><text x="600" y="248" class="t-eq-s" style="fill:var(--verd)">envelope opens → 1000 → H(1000) = 9f3a… ✓ matches</text></g>
+            <g class="fade" style="animation-delay:5.6s">
+              <rect x="430" y="290" width="86" height="42" rx="5" fill="none" stroke="var(--wax)" stroke-width="2" stroke-dasharray="6 4"/>
+              <text x="473" y="317" class="t-eq-s" style="fill:var(--wax)">9999</text>
+              <g class="atk-x"><line x1="546" y1="296" x2="576" y2="326"/><line x1="576" y1="296" x2="546" y2="326"/></g>
+              <text x="700" y="317" class="t-eq-s" style="fill:var(--wax)">H(9999) ≠ 9f3a… — rejected</text>
+            </g>
+            <g class="fade" style="animation-delay:6.6s"><text x="600" y="390" class="t-note">Locked in now, opened later, never swapped: binding and hiding at once.</text></g>
+          </g>
+
+          <!-- vii · the size of can't -->
+          <g class="lab-scene">
+            <g class="fade" style="animation-delay:.2s"><text x="600" y="84" class="t-eq">2^128 =</text></g>
+            <text x="600" y="128" class="t-eq-s">340,282,366,920,938,463,463,374,607,431,768,211,456</text>
+            <rect class="lab-cover" x="240" y="106" width="720" height="32" fill="var(--paper)"/>
+            <g class="fade" style="animation-delay:3.6s">
+              <text x="600" y="196" class="t-eq-s">every grain of sand on Earth, given its own Earth of sand: still short</text>
+            </g>
+            <g class="fade" style="animation-delay:4.7s">
+              <text x="600" y="236" class="t-eq-s">10⁹ computers × 10⁹ guesses/s × the age of the universe: under a millionth of the space</text>
+            </g>
+            <g class="stamped" style="animation-delay:5.9s;--tilt:-5deg">
+              <g transform="translate(600,330)">
+                <rect x="-250" y="-28" width="500" height="56" rx="6" fill="rgba(240,231,211,.6)" stroke="var(--verd)" stroke-width="3"/>
+                <text y="7" text-anchor="middle" style="font-family:var(--mono)" font-weight="600" font-size="16" letter-spacing="3" fill="var(--verd)">THIS IS WHAT "CAN'T" MEANS</text>
+              </g>
+            </g>
+          </g>
+
+          <!-- viii · one key, or two -->
+          <g class="lab-scene">
+            <line x1="600" y1="50" x2="600" y2="330" class="hairline"/>
+            <g class="anim" style="animation-delay:.2s">
+              <text x="320" y="70" class="t-name" style="font-size:11px">THE STAMP · MAC</text>
+              <use href="#lab-stamp" transform="translate(320,130)"/>
+              <g stroke="var(--brass)"><use href="#lab-key" transform="translate(250,200)"/></g>
+              <g stroke="var(--brass)"><use href="#lab-key" transform="translate(390,200)"/></g>
+              <text x="250" y="232" class="t-mono-s">k — yours</text>
+              <text x="390" y="232" class="t-mono-s">k — the bank's</text>
+              <text x="320" y="268" class="t-mono-s">identical · both make, both check</text>
+            </g>
+            <g class="fade" style="animation-delay:1.2s"><text x="320" y="304" class="t-eq-s" style="fill:var(--wax)">convinces only key-holders</text></g>
+            <g class="anim" style="animation-delay:1.8s">
+              <text x="880" y="70" class="t-name" style="font-size:11px">THE PEN · SIGNATURE</text>
+              <use href="#lab-pen" transform="translate(880,130) scale(1.4)"/>
+              <g stroke="var(--wax)"><use href="#lab-key" transform="translate(810,200)"/></g>
+              <g stroke="var(--verd)"><use href="#lab-key" transform="translate(950,200)"/></g>
+              <text x="810" y="232" class="t-mono-s" style="fill:var(--wax)">sk — writes · bank only</text>
+              <text x="950" y="232" class="t-mono-s" style="fill:var(--verd)">pk — checks · anyone</text>
+              <text x="880" y="268" class="t-mono-s">different keys, different powers</text>
+            </g>
+            <g class="fade" style="animation-delay:3s"><text x="880" y="304" class="t-eq-s" style="fill:var(--verd)">convinces total strangers</text></g>
+            <g class="fade" style="animation-delay:4s">
+              <text x="600" y="376" class="t-note">TLS stamps the conversation and pens only the hello — TLSNotary lifts stamped bytes to pen-grade proof.</text>
+            </g>
+          </g>
+        </svg>
+      </div>
+      <div class="lab-bar">
+        <button class="btn" id="lab-prev" aria-label="Previous idea">‹</button>
+        <div class="lab-cap" id="lab-cap"></div>
+        <button class="btn" id="lab-replay" aria-label="Replay animation">↻</button>
+        <button class="btn" id="lab-next" aria-label="Next idea">›</button>
+      </div>
+    </section>
+
     <div class="colophon">
       COMPANION TO THE ILLUSTRATED EDITION · SOURCES: TLSNOTARY.ORG DOCS · DECO (ZHANG ET AL., CCS '20) · YAO '86 · IKNP '03
       &nbsp;✦&nbsp; SIMPLIFICATIONS REMAIN — THE PROTOCOL'S OWN SPECS ARE THE LAST WORD
@@ -1091,6 +1400,46 @@ document.addEventListener("keydown", e=>{
   }
   requestAnimationFrame(tick);
 })();
+
+/* ── the primer, animated ── */
+const LAB = [
+  {t:"i", name:"checksum",  cap:"a checksum with a secret ingredient — and why its owner can forge"},
+  {t:"ii", name:"the hop",  cap:"easy forward, uncountable backward — a secret agreed in public"},
+  {t:"iii", name:"sharing", cap:"723 + 277: halves that mean nothing until they meet"},
+  {t:"iv", name:"codenames",cap:"locked boxes and sealed envelopes: computing without seeing"},
+  {t:"v", name:"blender",   cap:"hashes never run backwards; the tree vouches for every chunk"},
+  {t:"vi", name:"envelope", cap:"commitments: locked in now, opened later, never swapped"},
+  {t:"vii", name:"2^-128",  cap:"how big the impossible actually is"},
+  {t:"viii", name:"stamp·pen", cap:"one key or two — why only the pen convinces strangers"}
+];
+const labScenes = document.querySelectorAll(".lab-scene");
+const labTabs = document.getElementById("lab-tabs");
+const labCap = document.getElementById("lab-cap");
+let labIdx = 0;
+LAB.forEach((c,i)=>{
+  const b = document.createElement("button");
+  b.className = "lab-tab";
+  b.innerHTML = c.t + '<span class="lab-tab-name">' + c.name + '</span>';
+  b.addEventListener("click", ()=> labGo(i));
+  labTabs.appendChild(b);
+});
+const labTabEls = labTabs.querySelectorAll(".lab-tab");
+function labGo(i){
+  labIdx = (i + LAB.length) % LAB.length;
+  labScenes.forEach((sc,j)=> sc.classList.toggle("active", j===labIdx));
+  labTabEls.forEach((tb,j)=> tb.classList.toggle("active", j===labIdx));
+  labCap.textContent = LAB[labIdx].cap;
+}
+function labReplay(){
+  const sc = labScenes[labIdx];
+  sc.classList.remove("active"); void sc.getBoundingClientRect(); sc.classList.add("active");
+}
+document.getElementById("lab-prev").addEventListener("click", ()=> labGo(labIdx-1));
+document.getElementById("lab-next").addEventListener("click", ()=> labGo(labIdx+1));
+document.getElementById("lab-replay").addEventListener("click", labReplay);
+labGo(0);
+const labQ = new URLSearchParams(location.search).get("lab");
+if(labQ){ const qi = parseInt(labQ,10); if(qi >= 1 && qi <= 8) labGo(qi-1); document.getElementById("lab").scrollIntoView(); }
 
 const hash = location.hash.slice(1).split(".");
 const hp = parseInt(hash[0], 10), hs = parseInt(hash[1], 10);
